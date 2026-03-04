@@ -12,14 +12,15 @@ void stop(int){ run = false; }
 static void usage() {
     std::cout
         << "Usage: ./sqgen_gpio [--pin=N] [--freq=HZ] [--chip=PATH]\n"
-           "Defaults: --pin=9 --freq=1.0 --chip=/dev/gpiochip0\n"
-           "Example:  sudo ./sqgen_gpio --pin=9 --freq=10\n"
+           "Defaults: --pin=270 --freq=1.0 --chip=/dev/gpiochip0\n"
+           "Example:  sudo ./sqgen_gpio --pin=270 --freq=10\n"
            "\n"
-           "Orange Pi Zero 2W GPIO line offsets:\n"
-           "  PWM1->line 21, PWM2->line 22, PWM3->line 2, PWM4->line 9 (physical pin 16)\n"
+           "Orange Pi Zero 2W GPIO line offsets (use these as --pin values):\n"
+           "  PWM1->GPIO 267 (pin 32), PWM2->GPIO 268 (pin 33),\n"
+           "  PWM3->GPIO 269 (pin 7),  PWM4->GPIO 270 (pin 16)\n"
            "\n"
            "Options:\n"
-           "  --pin=N     GPIO line offset (default: 9)\n"
+           "  --pin=N     GPIO line offset (default: 270, i.e. PWM4 / physical pin 16)\n"
            "  --freq=HZ   frequency in Hz (default: 1.0)\n"
            "  --chip=PATH GPIO chip device (default: /dev/gpiochip0)\n"
            "  --help      show this help and exit\n";
@@ -27,7 +28,7 @@ static void usage() {
 
 int main(int argc,char**argv)
 {
-    int pin = 9; // PWM4 on Orange Pi Zero 2W, physical pin 16
+    int pin = 270; // PWM4 on Orange Pi Zero 2W, GPIO 270, physical pin 16
     double freq = 1.0;
     const char* chip_path = "/dev/gpiochip0";
 

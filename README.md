@@ -3,7 +3,7 @@
 
 This project provides three implementations of a square signal generator for Orange Pi Zero 2W (H618).
 
-Default output pin: physical pin 16 (PWM4, GPIO line offset 9)  
+Default output pin: physical pin 16 (PWM4, GPIO 270)  
 Ground: physical pin 14  
 Signal level: 3.3V
 
@@ -11,14 +11,14 @@ Frequency range: 1 Hz – 1 kHz (or higher depending on method)
 
 ## Orange Pi Zero 2W GPIO Offsets
 
-PWM channels on `/dev/gpiochip0` (line offsets):
+PWM channels on `/dev/gpiochip0` (GPIO line offsets, as used by libgpiod `--pin`):
 
-| PWM channel | Line offset | Physical pin |
+| PWM channel | GPIO offset | Physical pin |
 |-------------|-------------|--------------|
-| PWM1        | 21          | —            |
-| PWM2        | 22          | —            |
-| PWM3        | 2           | —            |
-| PWM4        | 9           | Pin 16       |
+| PWM1        | 267         | Pin 32       |
+| PWM2        | 268         | Pin 33       |
+| PWM3        | 269         | Pin 7        |
+| PWM4        | 270         | Pin 16       |
 
 Sysfs PWM channels on `/sys/class/pwm/pwmchip0`:
 
@@ -50,13 +50,13 @@ cmake --build build --parallel
 Simple GPIO toggling loop using libgpiod with configurable chip, line offset, and frequency.
 
 ```
-sudo ./build/sqgen_gpio --freq=10 --pin=9
-sudo ./build/sqgen_gpio --freq=10 --pin=9 --chip=/dev/gpiochip0
+sudo ./build/sqgen_gpio --freq=10 --pin=270
+sudo ./build/sqgen_gpio --freq=10 --pin=270 --chip=/dev/gpiochip0
 sudo ./build/sqgen_gpio --help
 ```
 
 Options:
-- `--pin=N`    GPIO line offset (default: 9, i.e. PWM4 / physical pin 16)
+- `--pin=N`    GPIO line offset (default: 270, i.e. PWM4 / physical pin 16)
 - `--freq=HZ`  frequency in Hz (default: 1.0)
 - `--chip=PATH` GPIO chip device (default: /dev/gpiochip0)
 - `--help`     show help and exit
@@ -66,12 +66,12 @@ Software PWM on any GPIO line with configurable frequency and duty cycle.
 Uses libgpiod for portable GPIO access.
 
 ```
-sudo ./build/sqgen_wiringop_pwm --pin=9 --freq=1000 --duty=0.5
+sudo ./build/sqgen_wiringop_pwm --pin=270 --freq=1000 --duty=0.5
 sudo ./build/sqgen_wiringop_pwm --help
 ```
 
 Options:
-- `--pin=N`    GPIO line offset (default: 9, i.e. PWM4 / physical pin 16)
+- `--pin=N`    GPIO line offset (default: 270, i.e. PWM4 / physical pin 16)
 - `--freq=HZ`  frequency in Hz (default: 1000)
 - `--duty=D`   duty cycle 0..1 exclusive (default: 0.5)
 - `--chip=PATH` GPIO chip device (default: /dev/gpiochip0)
