@@ -1,4 +1,5 @@
 
+#include <atomic>
 #include <fstream>
 #include <iostream>
 #include <thread>
@@ -6,9 +7,9 @@
 #include <csignal>
 #include <cstring>
 
-static volatile bool running=true;
+static std::atomic<bool> running{true};
 
-void stop(int){ running=false; }
+void stop(int){ running.store(false); }
 
 bool write_file(const std::string &p,const std::string &v)
 {
