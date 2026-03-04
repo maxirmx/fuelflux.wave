@@ -8,4 +8,5 @@ add_executable(sqgen_gpio sqgen_gpio.cpp)
 add_executable(sqgen_wiringop_pwm sqgen_wiringop_pwm.cpp)
 add_executable(sqgen_sysfs_pwm sqgen_sysfs_pwm.cpp)
 
-target_link_libraries(sqgen_wiringop_pwm wiringPi)
+target_link_libraries(sqgen_gpio gpiod)
+target_link_libraries(sqgen_wiringop_pwm gpiod)
