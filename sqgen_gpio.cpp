@@ -21,6 +21,12 @@ int main(int argc,char**argv)
             freq = atof(argv[i]+7);
     }
 
+    if(freq <= 0.0)
+    {
+        std::cerr << "Error: --freq must be > 0\n";
+        return 2;
+    }
+
     wiringPiSetupPhys();
     pinMode(pin,OUTPUT);
 
