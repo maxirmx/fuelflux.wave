@@ -5,12 +5,13 @@
 //   g++ -O2 -std=c++17 sqgen_wiringop_pwm.cpp -o sqgen_wiringop_pwm -lgpiod
 //
 // Run examples:
-//   sudo ./sqgen_wiringop_pwm --pin=9 --freq=1000 --duty=0.5
+//   sudo ./sqgen_wiringop_pwm --pin=270 --freq=1000 --duty=0.5
 //
 // Notes:
-// - Uses GPIO line offset numbers (not physical pin numbers).
+// - Uses GPIO line offset numbers (not physical pin numbers, not WiringPi wPi numbers).
 // - Orange Pi Zero 2W PWM channel GPIO offsets:
-//     PWM1->line 21, PWM2->line 22, PWM3->line 2, PWM4->line 9 (physical pin 16)
+//     PWM1->GPIO 267 (pin 32), PWM2->GPIO 268 (pin 33),
+//     PWM3->GPIO 269 (pin 7),  PWM4->GPIO 270 (pin 16)
 // - For kernel-managed PWM with very low CPU usage, prefer sqgen_sysfs_pwm.
 
 #include <gpiod.h>
@@ -32,12 +33,16 @@ static bool starts_with(const char* s, const char* pfx) {
 static void usage() {
   std::cout
     << "Usage: ./sqgen_wiringop_pwm [--pin=N] [--freq=HZ] [--duty=0..1] [--chip=PATH]\n"
-       "Defaults: --pin=9 --freq=1000 --duty=0.5 --chip=/dev/gpiochip0\n"
-       "Example:  sudo ./sqgen_wiringop_pwm --pin=9 --freq=1000 --duty=0.5\n";
+       "Defaults: --pin=270 --freq=1000 --duty=0.5 --chip=/dev/gpiochip0\n"
+       "Example:  sudo ./sqgen_wiringop_pwm --pin=270 --freq=1000 --duty=0.5\n"
+       "\n"
+       "Orange Pi Zero 2W GPIO line offsets (use these as --pin values):\n"
+       "  PWM1->GPIO 267 (pin 32), PWM2->GPIO 268 (pin 33),\n"
+       "  PWM3->GPIO 269 (pin 7),  PWM4->GPIO 270 (pin 16)\n";
 }
 
 int main(int argc, char** argv) {
-  int pin = 9;
+  int pin = 270; // PWM4 on Orange Pi Zero 2W, GPIO 270, physical pin 16
   double freq_hz = 1000.0;
   double duty = 0.5;
   const char* chip_path = "/dev/gpiochip0";
