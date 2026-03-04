@@ -33,7 +33,7 @@ sudo ./sqgen_wiringop_pwm --freq=1000
 Supports true 1 Hz and very low CPU usage.
 
 Build:
-g++ -O2 -std=c++17 sqgen_sysfs_pwm.cpp -o sqgen_pwm
+g++ -O2 -std=c++17 sqgen_sysfs_pwm.cpp -o sqgen_sysfs_pwm
 
 Run:
-sudo ./sqgen_pwm --freq=1
+sudo ./sqgen_sysfs_pwm --freq=1
