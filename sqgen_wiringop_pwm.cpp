@@ -2,6 +2,11 @@
 #include <wiringPi.h>
 #include <iostream>
 #include <cstring>
+#include <csignal>
+
+static volatile bool running = true;
+
+void stop(int){ running = false; }
 
 int main(int argc,char**argv)
 {
@@ -28,8 +33,11 @@ int main(int argc,char**argv)
     int value = range * duty;
     pwmWrite(pwmPin,value);
 
+    signal(SIGINT, stop);
+    signal(SIGTERM, stop);
+
     std::cout<<"PWM running"<<std::endl;
 
-    while(true)
+    while(running)
         delay(1000);
 }
