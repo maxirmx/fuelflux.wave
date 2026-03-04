@@ -9,9 +9,25 @@ volatile bool run = true;
 
 void stop(int){ run = false; }
 
+static void usage() {
+    std::cout
+        << "Usage: ./sqgen_gpio [--pin=N] [--freq=HZ] [--chip=PATH]\n"
+           "Defaults: --pin=9 --freq=1.0 --chip=/dev/gpiochip0\n"
+           "Example:  sudo ./sqgen_gpio --pin=9 --freq=10\n"
+           "\n"
+           "Orange Pi Zero 2W GPIO line offsets:\n"
+           "  PWM1->line 21, PWM2->line 22, PWM3->line 2, PWM4->line 9 (physical pin 16)\n"
+           "\n"
+           "Options:\n"
+           "  --pin=N     GPIO line offset (default: 9)\n"
+           "  --freq=HZ   frequency in Hz (default: 1.0)\n"
+           "  --chip=PATH GPIO chip device (default: /dev/gpiochip0)\n"
+           "  --help      show this help and exit\n";
+}
+
 int main(int argc,char**argv)
 {
-    int pin = 11;
+    int pin = 9; // PWM4 on Orange Pi Zero 2W, physical pin 16
     double freq = 1.0;
     const char* chip_path = "/dev/gpiochip0";
 
@@ -19,10 +35,12 @@ int main(int argc,char**argv)
     {
         if(strncmp(argv[i],"--pin=",6)==0)
             pin = atoi(argv[i]+6);
-        if(strncmp(argv[i],"--freq=",7)==0)
+        else if(strncmp(argv[i],"--freq=",7)==0)
             freq = atof(argv[i]+7);
-        if(strncmp(argv[i],"--chip=",7)==0)
+        else if(strncmp(argv[i],"--chip=",7)==0)
             chip_path = argv[i]+7;
+        else if(strcmp(argv[i],"--help")==0){ usage(); return 0; }
+        else { std::cerr << "Unknown arg: " << argv[i] << "\n"; usage(); return 2; }
     }
 
     if(freq <= 0.0)
@@ -56,6 +74,12 @@ int main(int argc,char**argv)
     double period = 1.0 / freq;
     int high_us = (int)(period * 500000);
     int low_us  = (int)(period * 500000);
+
+    std::cerr << "GPIO square wave running:\n"
+              << "  chip=" << chip_path << "  line=" << pin << "\n"
+              << "  freq=" << freq << " Hz  duty=0.5\n"
+              << "  high=" << high_us << " us  low=" << low_us << " us\n"
+              << "Ctrl+C to stop.\n";
 
     signal(SIGINT,stop);
 
