@@ -9,31 +9,61 @@ Signal level: 3.3V
 
 Frequency range: 1 Hz – 1 kHz (or higher depending on method)
 
+## Dependencies
+
+Install `libgpiod-dev` (required for implementations 1 and 2):
+
+```
+sudo apt-get install libgpiod-dev
+```
+
+## Build (CMake)
+
+```
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+```
+
 ## Implementations
 
-### 1. GPIO Software Toggle
-Simple GPIO toggling loop with configurable pin and frequency.
+### 1. GPIO Software Toggle (`sqgen_gpio`)
+Simple GPIO toggling loop using libgpiod with configurable chip, line offset, and frequency.
 
-Build:
-g++ -O2 -std=c++17 sqgen_gpio.cpp -o sqgen_gpio -lwiringPi
+```
+sudo ./build/sqgen_gpio --freq=10 --pin=11
+sudo ./build/sqgen_gpio --freq=10 --pin=11 --chip=/dev/gpiochip0
+```
 
-Run:
-sudo ./sqgen_gpio --freq=10 --pin=11
+Options:
+- `--pin=N`   GPIO line offset (default: 11)
+- `--freq=HZ` frequency in Hz (default: 1.0)
+- `--chip=PATH` GPIO chip device (default: /dev/gpiochip0)
 
-### 2. Hardware PWM (wiringOP)
-Uses hardware PWM controller.
+### 2. Software PWM via libgpiod (`sqgen_wiringop_pwm`)
+Software PWM on any GPIO line with configurable frequency and duty cycle.  
+Uses libgpiod for portable GPIO access.
 
-Build:
-g++ -O2 -std=c++17 sqgen_wiringop_pwm.cpp -o sqgen_wiringop_pwm -lwiringPi
+Orange Pi Zero 2W PWM channel GPIO line offsets:
+PWM1→line 21, PWM2→line 22, PWM3→line 2, PWM4→line 9 (physical pin 16)
 
-Run:
-sudo ./sqgen_wiringop_pwm --freq=1000
+```
+sudo ./build/sqgen_wiringop_pwm --pin=9 --freq=1000 --duty=0.5
+```
 
-### 3. Kernel PWM (sysfs) – Recommended
-Supports true 1 Hz and very low CPU usage.
+Options:
+- `--pin=N`    GPIO line offset (default: 9)
+- `--freq=HZ`  frequency in Hz (default: 1000)
+- `--duty=D`   duty cycle 0..1 exclusive (default: 0.5)
+- `--chip=PATH` GPIO chip device (default: /dev/gpiochip0)
 
-Build:
-g++ -O2 -std=c++17 sqgen_sysfs_pwm.cpp -o sqgen_sysfs_pwm
+### 3. Kernel PWM (sysfs) – Recommended (`sqgen_sysfs_pwm`)
+Uses the kernel PWM subsystem via sysfs. Supports true 1 Hz and very low CPU usage.  
+No external library required.
 
-Run:
-sudo ./sqgen_sysfs_pwm --freq=1
+```
+sudo ./build/sqgen_sysfs_pwm --freq=1 --duty=0.5
+```
+
+Options:
+- `--freq=HZ`  frequency in Hz (default: 1.0)
+- `--duty=D`   duty cycle 0..1 (default: 0.5)
